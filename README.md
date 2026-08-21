@@ -29,9 +29,37 @@ This project is built for backend-first development. The main emphasis is on:
 
 ---
 
+## Screenshots
+
+### Home
+
+![Home page](screenshots/home.png)
+
+### Product catalog
+
+![Product catalog](screenshots/product.png.png)
+
+### Authentication
+
+![Login page](screenshots/login.png)
+![Create account page](screenshots/create-account.png)
+
+### Cart and checkout
+
+![Cart page](screenshots/cart.png)
+![Checkout page](screenshots/checkout.png)
+![Address page](screenshots/address.png)
+
+### Orders
+
+![Order page](screenshots/order.png)
+![My orders page](screenshots/my-order.png)
+![Order placed successfully](screenshots/order-placed-successfully.png)
+
+---
+
 ## Project structure
 
-```text
 Ecommerce/
 ├── Ecommerce/
 │   ├── __init__.py
