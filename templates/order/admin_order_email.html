@@ -1,0 +1,16 @@
+<!doctype html>
+<html>
+  <body>
+    <h2>🛒 New Order Received</h2>
+
+    <p><b>Customer :</b> {{ order.user.user.get_full_name }}</p>
+
+    <p><b>Email :</b> {{ order.user.user.email }}</p>
+
+    <p><b>Order ID :</b> {{ order.order_id }}</p>
+
+    <p><b>Grand Total :</b> ₹{{ order.cart.get_cart_total }}</p>
+
+    <p>Please check the Admin Panel.</p>
+  </body>
+</html>

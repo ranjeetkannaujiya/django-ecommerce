@@ -1,0 +1,144 @@
+{% extends "base/base.html" %}
+
+{% block start %}
+
+<div class="container-fluid px-5">
+
+    <div class="row">
+
+        <!-- Left Side -->
+
+        <div class="col-md-8">
+
+            <h3>Order Summary</h3>
+
+            <hr>
+
+            {% for item in cart.cart_items.all %}
+
+            <div class="card mb-3">
+
+                <div class="card-body">
+
+                    <div class="row">
+
+                        <div class="col-md-2">
+
+                            {% if item.product.product_images.first %}
+
+                            <img
+                                src="{{ item.product.product_images.first.image.url }}"
+                                class="img-fluid rounded">
+
+                            {% endif %}
+
+                        </div>
+
+                        <div class="col-md-10">
+
+                            <h5>{{ item.product.product_name }}</h5>
+
+                            <p>
+
+                                Size :
+                                {{ item.size_variant }}
+
+                            </p>
+
+                            <p>
+
+                                Quantity :
+                                {{ item.quantity }}
+
+                            </p>
+
+                            <p>
+
+                                Price :
+                                ₹ {{ item.get_total_price }}
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+        <!-- Right Side -->
+
+        <div class="col-md-4">
+
+            <div class="card">
+
+                <div class="card-body">
+
+                    <h4>Cart Summary</h4>
+
+                    <hr>
+
+                    <p>
+
+                        Subtotal :
+
+                        ₹ {{ cart.get_cart_total }}
+
+                    </p>
+
+                    {% if cart.coupon %}
+
+                    <p class="text-success">
+
+                        Coupon :
+                        {{ cart.coupon.coupon_code }}
+
+                    </p>
+
+                    <p class="text-danger">
+
+                        Discount :
+                        ₹ {{ cart.coupon.discount_price }}
+
+                    </p>
+
+                    {% endif %}
+
+                    <hr>
+
+                    <h4>
+
+                        Grand Total
+
+                    </h4>
+
+                    <h3 class="text-success">
+
+                        ₹ {{ cart.get_cart_total }}
+
+                    </h3>
+
+                    <a
+                        href="{% url 'address' %}"
+                        class="btn btn-success w-100">
+
+                        Continue
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,400 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block start %}
+
+<div class="container-fluid px-2 px-md-4 px-lg-5 mt-3">
+  
+<div class="row">
+
+    <!-- ========================= -->
+    <!-- CART PRODUCTS -->
+    <!-- ========================= -->
+
+    <div class="col-xl-9 col-lg-8">
+
+        {% if cart and cart.cart_items.all %}
+
+            {% for item in cart.cart_items.all %}
+
+            <div class="card mb-3 shadow-sm border-0">
+
+                <div class="card-body">
+
+                    <div class="row align-items-center">
+
+                        <!-- PRODUCT IMAGE -->
+
+                        <div class="col-4 col-sm-3 col-md-2 text-center mb-3 mb-md-0">
+
+                            {% with image=item.product.product_images.first %}
+
+                                {% if image %}
+
+                                <img
+                                    src="{{ image.image.url }}"
+                                    class="img-fluid rounded cart-product-image"
+                                    alt="{{ item.product.product_name }}"
+                                >
+
+                                {% endif %}
+
+                            {% endwith %}
+
+                        </div>
+
+
+                        <!-- PRODUCT DETAILS -->
+
+                        <div class="col-8 col-sm-9 col-md-3 mb-3 mb-md-0">
+
+                            <h5 class="mb-1 cart-product-name">
+
+                                {{ item.product.product_name }}
+
+                            </h5>
+
+
+                            {% if item.size_variant %}
+
+                            <small class="text-muted">
+
+                                Size :
+                                {{ item.size_variant.size_name }}
+
+                            </small>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- QUANTITY -->
+
+                        <div class="col-6 col-md-2 text-center mb-3 mb-md-0">
+
+                            <strong class="d-block mb-2">
+
+                                Quantity
+
+                            </strong>
+
+                            <div class="d-flex justify-content-center align-items-center">
+
+                                <a
+                                    href="{% url 'decrease_quantity' item.uid %}"
+                                    class="btn btn-sm btn-secondary cart-quantity-btn"
+                                >
+                                    −
+                                </a>
+
+
+                                <span class="mx-2 font-weight-bold">
+
+                                    {{ item.quantity }}
+
+                                </span>
+
+
+                                <a
+                                    href="{% url 'increase_quantity' item.uid %}"
+                                    class="btn btn-sm btn-secondary cart-quantity-btn"
+                                >
+                                    +
+                                </a>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- PRICE -->
+
+                        <div class="col-6 col-md-2 text-center mb-3 mb-md-0">
+
+                            <strong class="d-block mb-2">
+
+                                Price
+
+                            </strong>
+
+                            <span>
+
+                                ₹ {{ item.get_single_price }}
+
+                            </span>
+
+                        </div>
+
+
+                        <!-- TOTAL -->
+
+                        <div class="col-6 col-md-2 text-center mb-3 mb-md-0">
+
+                            <strong class="d-block mb-2">
+
+                                Total
+
+                            </strong>
+
+                            <span class="font-weight-bold">
+
+                                ₹ {{ item.get_total_price }}
+
+                            </span>
+
+                        </div>
+
+
+                        <!-- REMOVE -->
+
+                        <div class="col-6 col-md-1 text-center">
+
+                            <a
+                                href="{% url 'remove_cart' item.uid %}"
+                                class="btn btn-danger btn-sm"
+                            >
+
+                                Remove
+
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+
+        {% else %}
+
+            <!-- EMPTY CART -->
+
+            <div class="card shadow-sm border-0 text-center">
+
+                <div class="card-body py-5">
+
+                    <i class="fa fa-shopping-cart fa-3x text-muted mb-3"></i>
+
+                    <h3>
+
+                        Your Cart is Empty
+
+                    </h3>
+
+                    <p class="text-muted">
+
+                        Add some products to your cart.
+
+                    </p>
+
+                    <a
+                        href="{% url 'index' %}"
+                        class="btn btn-primary"
+                    >
+
+                        Continue Shopping
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- ========================= -->
+    <!-- CART SUMMARY -->
+    <!-- ========================= -->
+
+    <div class="col-xl-3 col-lg-4 mt-3 mt-lg-0">
+
+        <div class="card shadow border-0">
+
+            <div class="card-body">
+
+                <h4 class="mb-3">
+
+                    Cart Summary
+
+                </h4>
+
+                <hr>
+
+
+                <!-- SUBTOTAL -->
+
+                <div class="d-flex justify-content-between mb-3">
+
+                    <strong>
+
+                        Subtotal
+
+                    </strong>
+
+                    <span>
+
+                        ₹ {{ cart.get_cart_total }}
+
+                    </span>
+
+                </div>
+
+
+                <!-- COUPON -->
+
+                {% if cart.coupon %}
+
+                <div class="alert alert-success">
+
+                    <strong>
+
+                        Coupon Applied
+
+                    </strong>
+
+                    <br>
+
+                    Code :
+
+                    {{ cart.coupon.coupon_code }}
+
+                    <br>
+
+                    Discount :
+
+                    ₹ {{ cart.coupon.discount_price }}
+
+                    <br><br>
+
+                    <a
+                        href="{% url 'remove_coupon' %}"
+                        class="btn btn-danger btn-sm"
+                    >
+
+                        Remove Coupon
+
+                    </a>
+
+                </div>
+
+                {% endif %}
+
+
+                <hr>
+
+
+                <!-- GRAND TOTAL -->
+
+                <div class="d-flex justify-content-between mb-3">
+
+                    <strong>
+
+                        Grand Total
+
+                    </strong>
+
+                    <strong>
+
+                        ₹ {{ cart.get_cart_total }}
+
+                    </strong>
+
+                </div>
+
+
+                <!-- CHECKOUT -->
+
+                {% if cart %}
+
+                <a
+                    href="{% url 'address' %}"
+                    class="btn btn-primary btn-block"
+                >
+
+                    Proceed To Checkout
+
+                </a>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+
+        <!-- ========================= -->
+        <!-- COUPON FORM -->
+        <!-- ========================= -->
+
+        <div class="card shadow border-0 mt-3">
+
+            <div class="card-body">
+
+                {% if messages %}
+
+                    {% for message in messages %}
+
+                    <div class="alert alert-{{ message.tags }}">
+
+                        {{ message }}
+
+                    </div>
+
+                    {% endfor %}
+
+                {% endif %}
+
+
+                <h5 class="mb-3">
+
+                    Apply Coupon
+
+                </h5>
+
+
+                <form
+                    method="POST"
+                    action="{% url 'apply_coupon' %}"
+                >
+
+                    {% csrf_token %}
+
+
+                    <input
+                        type="text"
+                        name="coupon"
+                        class="form-control mb-2"
+                        placeholder="Coupon Code"
+                    >
+
+
+                    <button
+                        type="submit"
+                        class="btn btn-success btn-block"
+                    >
+
+                        Apply Coupon
+
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+</div>
+
+{% endblock %}

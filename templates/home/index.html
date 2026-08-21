@@ -1,0 +1,319 @@
+{% extends "base/base.html" %}
+
+{% load static %}
+
+{% block start %}
+
+<!-- ==================================================
+     SORT BY
+================================================== -->
+
+<div class="row mb-4">
+
+    <div class="col-12 col-sm-8 col-md-5 col-lg-4 col-xl-3 ml-md-auto">
+
+        <div class="dropdown">
+
+            <button
+                type="button"
+                class="btn btn-outline-secondary dropdown-toggle w-100 text-left"
+                id="sortDropdown"
+                data-toggle="dropdown"
+                aria-haspopup="true"
+                aria-expanded="false">
+
+                {% if request.GET.sort == "low" %}
+
+                    Price : Low to High
+
+                {% elif request.GET.sort == "high" %}
+
+                    Price : High to Low
+
+                {% elif request.GET.sort == "az" %}
+
+                    Name : A-Z
+
+                {% elif request.GET.sort == "za" %}
+
+                    Name : Z-A
+
+                {% elif request.GET.sort == "latest" %}
+
+                    Latest Products
+
+                {% else %}
+
+                    Sort By
+
+                {% endif %}
+
+            </button>
+
+
+            <!-- SORT OPTIONS -->
+
+            <div
+                class="dropdown-menu dropdown-menu-right w-100"
+                aria-labelledby="sortDropdown">
+
+
+                <!-- DEFAULT -->
+
+                {% if request.GET.search %}
+
+                    <a
+                        class="dropdown-item"
+                        href="?search={{ request.GET.search|urlencode }}">
+
+                        Sort By
+
+                    </a>
+
+                {% else %}
+
+                    <a
+                        class="dropdown-item"
+                        href="?">
+
+                        Sort By
+
+                    </a>
+
+                {% endif %}
+
+
+                <!-- LOW TO HIGH -->
+
+                {% if request.GET.search %}
+
+                    <a
+                        class="dropdown-item"
+                        href="?search={{ request.GET.search|urlencode }}&sort=low">
+
+                        Price : Low to High
+
+                    </a>
+
+                {% else %}
+
+                    <a
+                        class="dropdown-item"
+                        href="?sort=low">
+
+                        Price : Low to High
+
+                    </a>
+
+                {% endif %}
+
+
+                <!-- HIGH TO LOW -->
+
+                {% if request.GET.search %}
+
+                    <a
+                        class="dropdown-item"
+                        href="?search={{ request.GET.search|urlencode }}&sort=high">
+
+                        Price : High to Low
+
+                    </a>
+
+                {% else %}
+
+                    <a
+                        class="dropdown-item"
+                        href="?sort=high">
+
+                        Price : High to Low
+
+                    </a>
+
+                {% endif %}
+
+
+                <!-- NAME A-Z -->
+
+                {% if request.GET.search %}
+
+                    <a
+                        class="dropdown-item"
+                        href="?search={{ request.GET.search|urlencode }}&sort=az">
+
+                        Name : A-Z
+
+                    </a>
+
+                {% else %}
+
+                    <a
+                        class="dropdown-item"
+                        href="?sort=az">
+
+                        Name : A-Z
+
+                    </a>
+
+                {% endif %}
+
+
+                <!-- NAME Z-A -->
+
+                {% if request.GET.search %}
+
+                    <a
+                        class="dropdown-item"
+                        href="?search={{ request.GET.search|urlencode }}&sort=za">
+
+                        Name : Z-A
+
+                    </a>
+
+                {% else %}
+
+                    <a
+                        class="dropdown-item"
+                        href="?sort=za">
+
+                        Name : Z-A
+
+                    </a>
+
+                {% endif %}
+
+
+                <!-- LATEST -->
+
+                {% if request.GET.search %}
+
+                    <a
+                        class="dropdown-item"
+                        href="?search={{ request.GET.search|urlencode }}&sort=latest">
+
+                        Latest Products
+
+                    </a>
+
+                {% else %}
+
+                    <a
+                        class="dropdown-item"
+                        href="?sort=latest">
+
+                        Latest Products
+
+                    </a>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ==================================================
+     PRODUCT GRID
+================================================== -->
+
+<div class="row">
+
+    {% for product in products %}
+
+        <div class="col-6 col-sm-6 col-md-4 col-lg-3 col-xl-2 mb-4">
+
+            <figure
+                class="card card-product-grid h-100 border-0 shadow rounded">
+
+                <!-- =========================
+                     PRODUCT IMAGE
+                ========================== -->
+
+                <div class="img-wrap text-center p-2">
+
+                    {% if product.product_images.first %}
+
+                        <a
+                            href="{% url 'get_product' product.slug %}"
+                            class="d-block">
+
+                            <img
+                                src="{{ product.product_images.first.image.url }}"
+                                class="img-fluid w-100"
+                                alt="{{ product.product_name }}"
+                                style="
+                                    height:180px;
+                                    object-fit:contain;
+                                ">
+
+                        </a>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- =========================
+                     PRODUCT INFO
+                ========================== -->
+
+                <figcaption
+                    class="info-wrap border-top p-2">
+
+                    <a
+                        href="{% url 'get_product' product.slug %}"
+                        class="title d-block text-center text-break">
+
+                        <b>
+
+                            {{ product.product_name }}
+
+                        </b>
+
+                    </a>
+
+
+                    <!-- PRICE -->
+
+                    <div
+                        class="price mt-2 text-center font-weight-bold">
+
+                        ₹ {{ product.price }}
+
+                    </div>
+
+                </figcaption>
+
+            </figure>
+
+        </div>
+
+
+    {% empty %}
+
+
+        <!-- =========================
+             NO PRODUCT
+        ========================== -->
+
+        <div class="col-12">
+
+            <div
+                class="alert alert-warning text-center">
+
+                No Product Found
+
+            </div>
+
+        </div>
+
+
+    {% endfor %}
+
+</div>
+
+{% endblock %}

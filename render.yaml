@@ -1,0 +1,36 @@
+services:
+  - type: web
+    name: r-ecommerce
+    runtime: python
+    plan: free
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "gunicorn Ecommerce.wsgi:application"
+    envVars:
+      - key: SECRET_KEY
+        sync: false
+      - key: DEBUG
+        value: "False"
+      - key: ALLOWED_HOSTS
+        value: "localhost,127.0.0.1,.onrender.com"
+      - key: DB_NAME
+        sync: false
+      - key: DB_USER
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: DB_HOST
+        sync: false
+      - key: DB_PORT
+        value: "5432"
+      - key: EMAIL_HOST_USER
+        sync: false
+      - key: EMAIL_HOST_PASSWORD
+        sync: false
+      - key: EMAIL_FROM_NAME
+        value: "R Ecommerce"
+      - key: ADMIN_EMAIL
+        sync: false
+      - key: SITE_URL
+        sync: false
+      - key: CSRF_TRUSTED_ORIGINS
+        value: "https://*.onrender.com"

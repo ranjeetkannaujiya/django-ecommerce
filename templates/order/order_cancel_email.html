@@ -1,0 +1,26 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+  </head>
+
+  <body style="font-family: Arial">
+    <h2>Hello {{ order.user.user.first_name }}</h2>
+
+    <p>Your order has been cancelled.</p>
+
+    <hr />
+
+    <p><b>Order ID :</b> {{ order.order_id }}</p>
+
+    <p><b>Status :</b> {{ order.order_status }}</p>
+
+    <p><b>Payment :</b> {{ order.payment_status }}</p>
+
+    <p><b>Total :</b> ₹{{ order.cart.get_cart_total }}</p>
+
+    <hr />
+
+    <p>If you have any questions please contact our support team.</p>
+  </body>
+</html>

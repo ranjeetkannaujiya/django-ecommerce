@@ -1,0 +1,276 @@
+{% extends "base/base.html" %}
+
+{% block start %}
+
+<div class="container-fluid px-2 px-md-4 py-3">
+
+<h2 class="mb-4 font-weight-bold text-center">
+    Checkout
+</h2>
+
+
+<div class="row">
+
+    <!-- =========================
+         Delivery Address
+    ========================== -->
+
+    <div class="col-12 col-lg-5 mb-4">
+
+        <div class="card border-0 shadow h-100">
+
+            <div class="card-header bg-white">
+
+                <h4 class="mb-0 font-weight-bold">
+                    Delivery Address
+                </h4>
+
+            </div>
+
+            <div class="card-body">
+
+                <h5 class="font-weight-bold mb-3">
+                    {{ order.address.full_name }}
+                </h5>
+
+                <p class="mb-2">
+                    📞 {{ order.address.phone }}
+                </p>
+
+                <p class="mb-2">
+                    📍 {{ order.address.address }}
+                </p>
+
+                <p class="mb-2">
+                    {{ order.address.city }},
+                    {{ order.address.state }}
+                </p>
+
+                <p class="mb-0">
+                    PIN - {{ order.address.pincode }}
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         Order Summary
+    ========================== -->
+
+    <div class="col-12 col-lg-7 mb-4">
+
+        <div class="card border-0 shadow">
+
+            <div class="card-header bg-white">
+
+                <h4 class="mb-0 font-weight-bold">
+                    Order Summary
+                </h4>
+
+            </div>
+
+            <div class="card-body">
+
+                {% for item in order.cart.cart_items.all %}
+
+                <div class="row align-items-center mb-3">
+
+                    <!-- PRODUCT -->
+                    <div class="col-12 col-sm-8 mb-2 mb-sm-0">
+
+                        <h6 class="font-weight-bold mb-1">
+                            {{ item.product.product_name }}
+                        </h6>
+
+                        {% if item.size_variant %}
+
+                        <small class="text-muted">
+                            Size : {{ item.size_variant }}
+                        </small>
+
+                        <br>
+
+                        {% endif %}
+
+                        <small class="text-muted">
+                            Quantity : {{ item.quantity }}
+                        </small>
+
+                    </div>
+
+
+                    <!-- PRICE -->
+                    <div class="col-12 col-sm-4 text-sm-right">
+
+                        <strong class="text-success">
+                            ₹ {{ item.get_total_price }}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+                <hr>
+
+                {% endfor %}
+
+
+                <!-- GRAND TOTAL -->
+
+                <div class="d-flex justify-content-between align-items-center flex-wrap">
+
+                    <h5 class="font-weight-bold mb-2">
+                        Grand Total
+                    </h5>
+
+                    <h4 class="text-success font-weight-bold mb-2">
+                        ₹ {{ order.cart.get_cart_total }}
+                    </h4>
+
+                </div>
+
+                <hr>
+
+
+                <!-- ORDER STATUS -->
+
+                <div class="mb-4">
+
+                    <h6 class="font-weight-bold">
+                        Order Status
+                    </h6>
+
+
+                    {% if order.order_status == "PENDING" %}
+
+                    <span class="badge badge-warning p-2">
+                        Pending
+                    </span>
+
+
+                    {% elif order.order_status == "CONFIRMED" %}
+
+                    <span class="badge badge-success p-2">
+                        Confirmed
+                    </span>
+
+
+                    {% elif order.order_status == "SHIPPED" %}
+
+                    <span class="badge badge-info p-2">
+                        Shipped
+                    </span>
+
+
+                    {% elif order.order_status == "DELIVERED" %}
+
+                    <span class="badge badge-primary p-2">
+                        Delivered
+                    </span>
+
+
+                    {% elif order.order_status == "CANCELLED" %}
+
+                    <span class="badge badge-danger p-2">
+                        Cancelled
+                    </span>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- PENDING -->
+
+                {% if order.order_status == "PENDING" %}
+
+                <div class="d-flex flex-column flex-sm-row">
+
+                    <a
+                        href="{% url 'payment' %}"
+                        class="btn btn-success mb-2 mb-sm-0 mr-sm-2">
+
+                        Pay Now
+
+                    </a>
+
+
+                    <a
+                        href="{% url 'cancel_order' order.order_id %}"
+                        class="btn btn-outline-danger">
+
+                        Cancel Order
+
+                    </a>
+
+                </div>
+
+                {% endif %}
+
+
+                <!-- CONFIRMED -->
+
+                {% if order.order_status == "CONFIRMED" %}
+
+                <div class="alert alert-success mt-3 mb-0">
+
+                    ✅ Payment Successful
+
+                </div>
+
+                {% endif %}
+
+
+                <!-- SHIPPED -->
+
+                {% if order.order_status == "SHIPPED" %}
+
+                <div class="alert alert-info mt-3 mb-0">
+
+                    🚚 Your Order has been Shipped
+
+                </div>
+
+                {% endif %}
+
+
+                <!-- DELIVERED -->
+
+                {% if order.order_status == "DELIVERED" %}
+
+                <div class="alert alert-success mt-3 mb-0">
+
+                    🎉 Order Delivered Successfully
+
+                </div>
+
+                {% endif %}
+
+
+                <!-- CANCELLED -->
+
+                {% if order.order_status == "CANCELLED" %}
+
+                <div class="alert alert-danger mt-3 mb-0">
+
+                    ❌ Order Cancelled
+
+                </div>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,260 @@
+{% extends "base/base.html" %}
+
+{% block start %}
+
+<div class="container-fluid px-2 px-md-4 px-lg-5 mt-4 mb-5">
+
+<div class="row justify-content-center">
+
+    <div class="col-xl-6 col-lg-7 col-md-9 col-12">
+
+        <!-- PAGE HEADING -->
+
+        <div class="text-center mb-4">
+
+            <h3 class="font-weight-bold">
+
+                Select Delivery Address
+
+            </h3>
+
+            <p class="text-muted mb-0">
+
+                Choose the address where you want your order delivered.
+
+            </p>
+
+        </div>
+
+
+        <!-- ADDRESS FORM -->
+
+        <form
+            method="POST"
+            action="{% url 'place_order' %}"
+        >
+
+            {% csrf_token %}
+
+
+            <!-- ========================= -->
+            <!-- ADDRESS LIST -->
+            <!-- ========================= -->
+
+            {% for address in addresses %}
+
+            <div class="card border-0 shadow-sm rounded mb-3">
+
+                <div class="card-body">
+
+                    <div class="form-check d-flex align-items-start">
+
+                        <!-- RADIO -->
+
+                        <input
+                            class="form-check-input mt-1"
+                            type="radio"
+                            name="address"
+                            id="address{{ forloop.counter }}"
+                            value="{{ address.uid }}"
+                            required
+                        >
+
+
+                        <!-- ADDRESS DETAILS -->
+
+                        <label
+                            class="form-check-label w-100 pl-2"
+                            for="address{{ forloop.counter }}"
+                        >
+
+                            <!-- NAME + BADGE -->
+
+                            <div class="d-flex justify-content-between align-items-start flex-wrap">
+
+                                <h5 class="mb-2 font-weight-bold">
+
+                                    {{ address.full_name }}
+
+                                </h5>
+
+                                <span class="badge badge-primary mb-2">
+
+                                    Delivery Address
+
+                                </span>
+
+                            </div>
+
+
+                            <hr>
+
+
+                            <!-- PHONE -->
+
+                            <p class="mb-2">
+
+                                <strong>
+
+                                    Phone :
+
+                                </strong>
+
+                                {{ address.phone }}
+
+                            </p>
+
+
+                            <!-- ADDRESS -->
+
+                            <p class="mb-2">
+
+                                <strong>
+
+                                    Address :
+
+                                </strong>
+
+                                {{ address.address }}
+
+                            </p>
+
+
+                            <!-- CITY -->
+
+                            <p class="mb-2">
+
+                                <strong>
+
+                                    City :
+
+                                </strong>
+
+                                {{ address.city }}
+
+                            </p>
+
+
+                            <!-- STATE -->
+
+                            <p class="mb-2">
+
+                                <strong>
+
+                                    State :
+
+                                </strong>
+
+                                {{ address.state }}
+
+                            </p>
+
+
+                            <!-- PINCODE -->
+
+                            <p class="mb-0">
+
+                                <strong>
+
+                                    Pincode :
+
+                                </strong>
+
+                                {{ address.pincode }}
+
+                            </p>
+
+                        </label>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            {% empty %}
+
+
+            <!-- ========================= -->
+            <!-- NO ADDRESS -->
+            <!-- ========================= -->
+
+            <div class="text-center py-5">
+
+                <i
+                    class="fa fa-map-marker-alt fa-4x text-secondary mb-3"
+                ></i>
+
+
+                <h4>
+
+                    No Address Found
+
+                </h4>
+
+
+                <p class="text-muted">
+
+                    Please add a delivery address first.
+
+                </p>
+
+
+                <a
+                    href="{% url 'add_address' %}"
+                    class="btn btn-primary rounded-pill px-4"
+                >
+
+                    Add Address
+
+                </a>
+
+            </div>
+
+            {% endfor %}
+
+
+            <!-- ========================= -->
+            <!-- BUTTONS -->
+            <!-- ========================= -->
+
+            {% if addresses %}
+
+            <div class="text-center mt-4 address-action-buttons">
+
+                <a
+                    href="{% url 'add_address' %}"
+                    class="btn btn-outline-primary rounded-pill px-4 mr-2 mb-2"
+                >
+
+                    <i class="fa fa-plus"></i>
+
+                    Add New Address
+
+                </a>
+
+
+                <button
+                    type="submit"
+                    class="btn btn-primary rounded-pill px-4 mb-2"
+                >
+
+                    <i class="fa fa-shopping-bag"></i>
+
+                    Place Order
+
+                </button>
+
+            </div>
+
+            {% endif %}
+
+        </form>
+
+    </div>
+
+</div>
+
+</div>
+
+{% endblock %}

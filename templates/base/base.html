@@ -1,0 +1,693 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+    <title>R Ecommerce</title>
+
+
+    <!-- ================================================== -->
+    <!-- BOOTSTRAP -->
+    <!-- ================================================== -->
+
+    <link rel="stylesheet"
+          href="{% static 'css/bootstrap.css' %}">
+
+
+    <!-- ================================================== -->
+    <!-- FONT AWESOME -->
+    <!-- ================================================== -->
+
+    <link rel="stylesheet"
+          href="{% static 'fonts/fontawesome/css/all.min.css' %}">
+
+
+    <!-- ================================================== -->
+    <!-- MAIN CSS -->
+    <!-- ================================================== -->
+
+    <link rel="stylesheet"
+          href="{% static 'css/ui.css' %}">
+
+
+    <!-- ================================================== -->
+    <!-- RESPONSIVE CSS -->
+    <!-- ================================================== -->
+
+    <link rel="stylesheet"
+          href="{% static 'css/responsive.css' %}">
+
+</head>
+
+
+<body>
+
+
+<!-- ========================================================= -->
+<!-- TOP NAVBAR -->
+<!-- ========================================================= -->
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark py-1">
+
+    <div class="container-fluid px-2 px-md-4">
+
+
+        <!-- MOBILE MENU BUTTON -->
+
+        <button
+            class="navbar-toggler"
+            type="button"
+            data-toggle="collapse"
+            data-target="#topNavbar"
+            aria-controls="topNavbar"
+            aria-expanded="false"
+            aria-label="Toggle navigation">
+
+            <span class="navbar-toggler-icon"></span>
+
+        </button>
+
+
+        <!-- NAVIGATION -->
+
+        <div
+            class="collapse navbar-collapse"
+            id="topNavbar">
+
+            <ul class="navbar-nav mr-auto">
+
+
+                <!-- HOME -->
+
+                <li class="nav-item">
+
+                    <a
+                        class="nav-link py-1"
+                        href="{% url 'index' %}">
+
+                        <i class="fa fa-home mr-1"></i>
+                        Home
+
+                    </a>
+
+                </li>
+
+
+                {% if request.user.is_authenticated %}
+
+
+                <!-- DELIVERY ADDRESS -->
+
+                <li class="nav-item">
+
+                    <a
+                        class="nav-link py-1"
+                        href="{% url 'address' %}">
+
+                        <i class="fa fa-map-marker-alt mr-1"></i>
+                        Delivery Address
+
+                    </a>
+
+                </li>
+
+
+                <!-- MY ORDERS -->
+
+                <li class="nav-item">
+
+                    <a
+                        class="nav-link py-1"
+                        href="{% url 'my_orders' %}">
+
+                        <i class="fa fa-box mr-1"></i>
+                        My Orders
+
+                    </a>
+
+                </li>
+
+
+                {% endif %}
+
+            </ul>
+
+
+            <!-- PHONE -->
+
+            <span class="navbar-text text-white small">
+
+                <i class="fa fa-phone mr-1"></i>
+                +91 9453510261
+
+            </span>
+
+        </div>
+
+    </div>
+
+</nav>
+
+
+
+<!-- ========================================================= -->
+<!-- MAIN HEADER -->
+<!-- ========================================================= -->
+
+<header class="bg-white">
+
+    <div class="container-fluid px-2 px-md-4">
+
+
+        <!-- MAIN HEADER ROW -->
+
+        <div class="row align-items-center no-gutters py-2">
+
+
+            <!-- ================================================== -->
+            <!-- LOGO -->
+            <!-- ================================================== -->
+
+            <div class="col-lg-2 col-md-3 col-5 pr-2">
+
+                <a
+                    href="{% url 'index' %}"
+                    class="d-inline-block">
+
+                    <img
+                        src="{% static 'images/rlogo.png' %}"
+                        class="img-fluid"
+                        alt="R Ecommerce"
+                        style="max-height:40px; width:auto;">
+
+                </a>
+
+            </div>
+
+
+            <!-- ================================================== -->
+            <!-- DESKTOP SEARCH -->
+            <!-- ================================================== -->
+
+            <div class="col-lg-6 col-md-5 d-none d-md-block px-2">
+
+                <form
+                    method="GET"
+                    action="{% url 'index' %}">
+
+                    <div class="input-group">
+
+                        <input
+                            type="text"
+                            name="search"
+                            class="form-control"
+                            placeholder="Search Product..."
+                            value="{{ request.GET.search }}">
+
+                        <div class="input-group-append">
+
+                            <button
+                                type="submit"
+                                class="btn btn-primary">
+
+                                <i class="fa fa-search"></i>
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+
+            <!-- ================================================== -->
+            <!-- RIGHT SIDE -->
+            <!-- ================================================== -->
+
+            <div class="col-lg-4 col-md-4 col-7 pl-1">
+
+                <div
+                    class="d-flex justify-content-end align-items-center">
+
+
+                    <!-- ================================================== -->
+                    <!-- MOBILE SEARCH -->
+                    <!-- ================================================== -->
+
+                    <button
+                        type="button"
+                        class="btn btn-link text-dark d-md-none p-1 mr-2"
+                        data-toggle="collapse"
+                        data-target="#mobileSearch"
+                        aria-controls="mobileSearch"
+                        aria-expanded="false"
+                        aria-label="Open search">
+
+                        <i class="fa fa-search"></i>
+
+                    </button>
+
+
+                    {% if request.user.is_authenticated %}
+
+
+                    <!-- ================================================== -->
+                    <!-- CART -->
+                    <!-- ================================================== -->
+
+                    <a
+                        href="{% url 'cart' %}"
+                        class="position-relative text-dark mr-3"
+                        aria-label="Shopping Cart">
+
+                        <i class="fa fa-shopping-cart fa-lg"></i>
+
+
+                        {% if cart_count %}
+
+                        <span
+                            class="badge badge-danger"
+                            style="
+                                position:absolute;
+                                top:-7px;
+                                right:-9px;
+                                font-size:9px;
+                                line-height:14px;
+                                min-width:14px;
+                                height:14px;
+                                padding:0 3px;
+                            ">
+
+                            {{ cart_count }}
+
+                        </span>
+
+                        {% endif %}
+
+                    </a>
+
+
+                    <!-- ================================================== -->
+                    <!-- PROFILE -->
+                    <!-- ================================================== -->
+
+                    <div class="dropdown">
+
+                        <a
+                            class="nav-link dropdown-toggle d-flex align-items-center p-0"
+                            href="#"
+                            id="profileDropdown"
+                            data-toggle="dropdown"
+                            aria-haspopup="true"
+                            aria-expanded="false"
+                            style="
+                                cursor:pointer;
+                                color:#000;
+                                text-decoration:none;
+                            ">
+
+
+                            <!-- PROFILE IMAGE -->
+
+                            {% if request.user.profile.profile_image %}
+
+                            <img
+                                src="{{ request.user.profile.profile_image.url }}"
+                                class="rounded-circle mr-2"
+                                width="30"
+                                height="30"
+                                style="object-fit:cover;"
+                                alt="Profile">
+
+                            {% else %}
+
+                            <img
+                                src="{% static 'images/default-user.png' %}"
+                                class="rounded-circle mr-2"
+                                width="30"
+                                height="30"
+                                style="object-fit:cover;"
+                                alt="Profile">
+
+                            {% endif %}
+
+
+                            <!-- USER NAME -->
+
+                            <div class="d-none d-sm-block">
+
+                                <small
+                                    class="text-muted"
+                                    style="font-size:10px;">
+
+                                    Welcome
+
+                                </small>
+
+                                <br>
+
+                                <strong
+                                    style="font-size:13px;">
+
+                                    {% if request.user.first_name %}
+
+                                        {{ request.user.first_name }}
+
+                                    {% else %}
+
+                                        {{ request.user.username }}
+
+                                    {% endif %}
+
+                                </strong>
+
+                            </div>
+
+                        </a>
+
+
+                        <!-- ================================================== -->
+                        <!-- PROFILE DROPDOWN -->
+                        <!-- ================================================== -->
+
+                        <div
+                            class="dropdown-menu dropdown-menu-right shadow">
+
+
+                            <a
+                                class="dropdown-item"
+                                href="{% url 'profile' %}">
+
+                                <i class="fa fa-user mr-2"></i>
+                                My Profile
+
+                            </a>
+
+
+                            <a
+                                class="dropdown-item"
+                                href="{% url 'my_orders' %}">
+
+                                <i class="fa fa-box mr-2"></i>
+                                My Orders
+
+                            </a>
+
+
+                            <a
+                                class="dropdown-item"
+                                href="{% url 'address' %}">
+
+                                <i class="fa fa-map-marker-alt mr-2"></i>
+                                My Address
+
+                            </a>
+
+
+                            <div class="dropdown-divider"></div>
+
+
+                            <a
+                                class="dropdown-item text-danger"
+                                href="{% url 'logout' %}">
+
+                                <i class="fa fa-sign-out-alt mr-2"></i>
+                                Logout
+
+                            </a>
+
+                        </div>
+
+                    </div>
+
+
+                    {% else %}
+
+
+                    <!-- ================================================== -->
+                    <!-- NOT LOGGED IN -->
+                    <!-- ================================================== -->
+
+                    <a
+                        class="btn btn-outline-primary btn-sm"
+                        href="{% url 'login' %}">
+
+                        Login
+
+                    </a>
+
+
+                    <a
+                        class="btn btn-primary btn-sm ml-1"
+                        href="{% url 'register' %}">
+
+                        Register
+
+                    </a>
+
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ================================================== -->
+        <!-- MOBILE SEARCH -->
+        <!-- ================================================== -->
+
+        <div
+            class="collapse d-md-none pb-2"
+            id="mobileSearch">
+
+            <form
+                method="GET"
+                action="{% url 'index' %}">
+
+                <div class="input-group">
+
+                    <input
+                        type="text"
+                        name="search"
+                        class="form-control"
+                        placeholder="Search Product..."
+                        value="{{ request.GET.search }}">
+
+                    <div class="input-group-append">
+
+                        <button
+                            type="submit"
+                            class="btn btn-primary">
+
+                            <i class="fa fa-search"></i>
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</header>
+
+
+
+<!-- ========================================================= -->
+<!-- MAIN CONTENT -->
+<!-- ========================================================= -->
+
+<main>
+
+    <div class="container-fluid px-2 px-md-4 py-3">
+
+        {% block start %}
+
+        {% endblock %}
+
+    </div>
+
+</main>
+
+
+
+<!-- ========================================================= -->
+<!-- FOOTER -->
+<!-- ========================================================= -->
+
+<footer class="bg-dark text-white py-4 mt-4">
+
+    <div class="container-fluid px-3 px-md-4">
+
+        <div class="row">
+
+
+            <!-- ABOUT -->
+
+            <div class="col-lg-4 col-md-4 col-sm-12 mb-4">
+
+                <h5>
+                    R Ecommerce
+                </h5>
+
+                <p class="text-light mb-0">
+
+                    A simple Django Ecommerce website built
+                    for learning Backend Development using Django.
+
+                </p>
+
+            </div>
+
+
+            <!-- QUICK LINKS -->
+
+            <div class="col-lg-4 col-md-4 col-sm-6 mb-4">
+
+                <h5>
+                    Quick Links
+                </h5>
+
+                <ul class="list-unstyled mb-0">
+
+                    <li class="mb-1">
+
+                        <a
+                            href="{% url 'index' %}"
+                            class="text-light">
+
+                            Home
+
+                        </a>
+
+                    </li>
+
+
+                    {% if request.user.is_authenticated %}
+
+                    <li class="mb-1">
+
+                        <a
+                            href="{% url 'cart' %}"
+                            class="text-light">
+
+                            Cart
+
+                        </a>
+
+                    </li>
+
+
+                    <li class="mb-1">
+
+                        <a
+                            href="{% url 'my_orders' %}"
+                            class="text-light">
+
+                            My Orders
+
+                        </a>
+
+                    </li>
+
+
+                    <li>
+
+                        <a
+                            href="{% url 'profile' %}"
+                            class="text-light">
+
+                            My Profile
+
+                        </a>
+
+                    </li>
+
+                    {% endif %}
+
+                </ul>
+
+            </div>
+
+
+            <!-- CONTACT -->
+
+            <div class="col-lg-4 col-md-4 col-sm-6 mb-4">
+
+                <h5>
+                    Contact
+                </h5>
+
+                <p class="mb-2">
+
+                    <i class="fa fa-phone mr-2"></i>
+
+                    +91 9453510261
+
+                </p>
+
+                <p class="mb-2">
+
+                    <i class="fa fa-envelope mr-2"></i>
+
+                    rkk28032005@gmail.com
+
+                </p>
+
+                <p class="mb-0">
+
+                    <i class="fa fa-map-marker-alt mr-2"></i>
+
+                    India
+
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <hr class="bg-secondary">
+
+
+        <div class="text-center small">
+
+            © 2026 R Ecommerce | Developed with Django
+
+        </div>
+
+    </div>
+
+</footer>
+
+
+
+<!-- ========================================================= -->
+<!-- JAVASCRIPT -->
+<!-- ========================================================= -->
+
+<script src="{% static 'js/jquery-2.0.0.min.js' %}"></script>
+
+<script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+
+
+</body>
+
+</html>

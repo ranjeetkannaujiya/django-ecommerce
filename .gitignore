@@ -1,0 +1,100 @@
+# =========================
+# Python
+# =========================
+
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*$py.class
+
+
+# =========================
+# Virtual Environment
+# =========================
+
+venv/
+env/
+.venv/
+
+
+# =========================
+# Django / Local Database
+# =========================
+
+db.sqlite3
+*.sqlite3
+
+
+# =========================
+# Environment Variables
+# =========================
+
+.env
+.env.*
+!.env.example
+
+
+# =========================
+# User Uploaded Media
+# =========================
+
+media/
+
+
+# =========================
+# Collected Static Files
+# =========================
+
+staticfiles/
+
+
+# =========================
+# IDE / Editor
+# =========================
+
+.vscode/
+.idea/
+
+
+# =========================
+# Operating System
+# =========================
+
+.DS_Store
+Thumbs.db
+
+
+# =========================
+# Logs
+# =========================
+
+*.log
+
+
+# =========================
+# Database Backups / Dump Files
+# =========================
+
+database_backup/
+data.json
+sqlite_data.json
+sqlite_data_utf8.json
+sqlite_data_final.json
+
+
+# =========================
+# Django Local Files
+# =========================
+
+*.pot
+*.mo
+
+
+# =========================
+# Test / Coverage
+# =========================
+
+.coverage
+htmlcov/
+.pytest_cache/

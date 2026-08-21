@@ -1,0 +1,24 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+  </head>
+
+  <body style="font-family: Arial">
+    <h2>Hello {{ order.user.user.first_name }}</h2>
+
+    <p>Your order status has been updated.</p>
+
+    <hr />
+
+    <p><b>Order ID :</b> {{ order.order_id }}</p>
+
+    <p><b>Current Status :</b></p>
+
+    <h2 style="color: green">{{ order.order_status }}</h2>
+
+    <hr />
+
+    <p>Thank you for shopping with us ❤️</p>
+  </body>
+</html>
