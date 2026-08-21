@@ -37,7 +37,7 @@ This project is built for backend-first development. The main emphasis is on:
 
 ### Product catalog
 
-![Product catalog](screenshots/product.png.png)
+![Product catalog](screenshots/product.png)
 
 ### Authentication
 
@@ -60,6 +60,7 @@ This project is built for backend-first development. The main emphasis is on:
 
 ## Project structure
 
+```text
 Ecommerce/
 ├── Ecommerce/
 │   ├── __init__.py
