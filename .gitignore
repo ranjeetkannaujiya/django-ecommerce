@@ -39,7 +39,11 @@ db.sqlite3
 # User Uploaded Media
 # =========================
 
-media/
+media/*
+!media/product/
+!media/product/**
+!media/categories/
+!media/categories/**
 
 
 # =========================
