@@ -5,6 +5,7 @@ services:
     plan: free
     buildCommand: "pip install -r requirements.txt"
     startCommand: "gunicorn Ecommerce.wsgi:application"
+    autoDeploy: true
     envVars:
       - key: SECRET_KEY
         sync: false
