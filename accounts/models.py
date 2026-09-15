@@ -2,7 +2,6 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-import uuid
 
 from base.models import BaseModel
 
@@ -66,6 +65,3 @@ def create_profile_and_send_activation_email(
         user=instance
     )
 
-    if not profile.email_token:
-        profile.email_token = str(uuid.uuid4())
-        profile.save(update_fields=["email_token"])

@@ -17,9 +17,6 @@ from django.contrib.auth.decorators import login_required
 
 def get_profile_with_token(user):
     profile, _ = Profile.objects.get_or_create(user=user)
-    if not profile.email_token:
-        profile.email_token = str(uuid.uuid4())
-        profile.save(update_fields=["email_token"])
     return profile
 
 
@@ -51,22 +48,6 @@ def login_page(request):
 
         if user_obj:
             login(request, user_obj)
-
-            if not profile.is_email_verified:
-                try:
-                    send_account_activation_email(
-                        user_obj.email,
-                        profile.email_token
-                    )
-                    messages.info(
-                        request,
-                        'You are logged in. Please verify your email when the activation message arrives.'
-                    )
-                except Exception:
-                    messages.warning(
-                        request,
-                        'You are logged in. Email verification is currently unavailable.'
-                    )
 
             next_url = request.GET.get("next")
             if next_url:
@@ -145,21 +126,9 @@ def register_page(request):
                         "password",
                     ]
                 )
-
-                try:
-                    send_account_activation_email(
-                        existing_user.email,
-                        profile.email_token
-                    )
-                    messages.warning(
-                        request,
-                        'Your pending account was updated. A new verification email was sent.'
-                    )
-                except Exception:
-                    messages.warning(
-                        request,
-                        'Account updated. Email verification is currently unavailable, but you can log in with your new password.'
-                    )
+                profile.is_email_verified = True
+                profile.save(update_fields=["is_email_verified"])
+                messages.success(request, 'Account updated and ready to use.')
             else:
                 messages.warning(request, "Email already exists.")
             return HttpResponseRedirect(request.path_info)
@@ -179,6 +148,8 @@ def register_page(request):
                     password=password,
                 )
                 profile = get_profile_with_token(user_obj)
+                profile.is_email_verified = True
+                profile.save(update_fields=["is_email_verified"])
         except IntegrityError:
             messages.error(
                 request,
@@ -192,21 +163,9 @@ def register_page(request):
             )
             return HttpResponseRedirect(request.path_info)
 
-        try:
-            send_account_activation_email(
-                user_obj.email,
-                profile.email_token
-            )
-        except Exception:
-            messages.warning(
-                request,
-                'Account created. Email verification is currently unavailable, but you can log in with your password.'
-            )
-            return HttpResponseRedirect(request.path_info)
-
         messages.success(
             request,
-            'An activation email has been sent to your email address.'
+            'Account created successfully. You can now log in.'
         )
 
         return HttpResponseRedirect(request.path_info)

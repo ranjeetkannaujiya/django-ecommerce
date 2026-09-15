@@ -18,8 +18,7 @@ from .models import Profile
 )
 class AccountFlowTests(TestCase):
 
-	@patch("accounts.views.send_account_activation_email")
-	def test_registration_normalizes_email(self, send_email):
+	def test_registration_normalizes_email(self):
 		response = self.client.post(
 			reverse("register"),
 			{
@@ -34,10 +33,8 @@ class AccountFlowTests(TestCase):
 		self.assertRedirects(response, reverse("register"))
 		user = User.objects.get(username="testuser")
 		self.assertEqual(user.email, "test@example.com")
-		send_email.assert_called_once()
 
-	@patch("accounts.views.send_account_activation_email")
-	def test_duplicate_unverified_email_resends_activation(self, send_email):
+	def test_duplicate_unverified_email_updates_account(self):
 		user = User.objects.create_user(
 			username="pending",
 			email="pending@example.com",
@@ -61,10 +58,8 @@ class AccountFlowTests(TestCase):
 		user.refresh_from_db()
 		self.assertEqual(user.username, "another")
 		self.assertTrue(user.check_password("StrongPassword123"))
-		send_email.assert_called_once()
 
-	@patch("accounts.views.send_account_activation_email")
-	def test_duplicate_email_recovers_missing_profile(self, send_email):
+	def test_duplicate_email_recovers_missing_profile(self):
 		user = User.objects.create_user(
 			username="legacy",
 			email="legacy@example.com",
@@ -84,10 +79,8 @@ class AccountFlowTests(TestCase):
 		)
 
 		self.assertTrue(Profile.objects.filter(user=user).exists())
-		send_email.assert_called_once()
 
-	@patch("accounts.views.send_account_activation_email")
-	def test_unverified_login_resends_activation(self, send_email):
+	def test_unverified_login_works_without_activation_email(self):
 		user = User.objects.create_user(
 			username="pending",
 			email="pending@example.com",
@@ -102,7 +95,6 @@ class AccountFlowTests(TestCase):
 		)
 
 		self.assertRedirects(response, reverse("index"))
-		send_email.assert_called_once()
 
 	def test_verified_login_accepts_case_insensitive_email(self):
 		user = User.objects.create_user(
