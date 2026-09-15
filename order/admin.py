@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.utils.safestring import mark_safe
 from .models import Order, Address
-from .emails import (send_invoice_email, send_order_status_email, send_order_cancel_email,)
+from .emails import send_order_status_email, send_order_cancel_email
 
 
 @admin.register(Order)
@@ -197,15 +197,6 @@ class OrderAdmin(admin.ModelAdmin):
             old_payment = old.payment_status
 
         super().save_model(request, obj, form, change)
-
-        # Payment Successful
-        if (
-            change and
-            old_payment != obj.payment_status and
-            obj.payment_status == "SUCCESS"
-        ):
-
-            send_invoice_email(obj)
 
         # Order Cancelled
         if (

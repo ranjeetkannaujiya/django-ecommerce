@@ -7,10 +7,7 @@ from accounts.models import Profile
 from cart.models import Cart
 from .models import Address, Order
 
-from .emails import (
-    send_invoice_email,
-    send_admin_new_order_email,
-)
+from .emails import send_admin_new_order_email
 
 
 # =========================================================
@@ -379,27 +376,7 @@ def payment_success(request):
     )
 
     # =====================================================
-    # 4. CUSTOMER INVOICE EMAIL
-    # =====================================================
-
-    try:
-
-        send_invoice_email(order)
-
-        print(
-            "Customer Invoice Sent"
-        )
-
-    except Exception as e:
-
-        # Email failure should NOT break order success
-        print(
-            "Customer Invoice Error:",
-            e
-        )
-
-    # =====================================================
-    # 5. CLEAR CURRENT ORDER SESSION
+    # 4. CLEAR CURRENT ORDER SESSION
     # =====================================================
 
     request.session.pop(
@@ -408,7 +385,7 @@ def payment_success(request):
     )
 
     # =====================================================
-    # 6. SUCCESS MESSAGE
+    # 5. SUCCESS MESSAGE
     # =====================================================
 
     messages.success(
@@ -417,7 +394,7 @@ def payment_success(request):
     )
 
     # =====================================================
-    # 7. REDIRECT
+    # 6. REDIRECT
     # =====================================================
 
     return redirect(
