@@ -101,7 +101,7 @@ class AccountFlowTests(TestCase):
 			{"login": "PENDING@EXAMPLE.COM", "password": "StrongPassword123"},
 		)
 
-		self.assertRedirects(response, reverse("login"))
+		self.assertRedirects(response, reverse("index"))
 		send_email.assert_called_once()
 
 	def test_verified_login_accepts_case_insensitive_email(self):

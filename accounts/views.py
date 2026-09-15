@@ -43,24 +43,6 @@ def login_page(request):
 
         profile = get_profile_with_token(user_obj)
 
-        if not profile.is_email_verified:
-            try:
-                send_account_activation_email(
-                    user_obj.email,
-                    profile.email_token
-                )
-                messages.warning(
-                    request,
-                    'Your account is not verified. A new verification email was sent.'
-                )
-            except Exception:
-                messages.error(
-                    request,
-                    'Your account is not verified and the verification email could not be sent. Please try again later.'
-                )
-            return HttpResponseRedirect(request.path_info)
-
-
         username = user_obj.username if user_obj else login_input
         user_obj = authenticate(
             username=username,
@@ -69,6 +51,22 @@ def login_page(request):
 
         if user_obj:
             login(request, user_obj)
+
+            if not profile.is_email_verified:
+                try:
+                    send_account_activation_email(
+                        user_obj.email,
+                        profile.email_token
+                    )
+                    messages.info(
+                        request,
+                        'You are logged in. Please verify your email when the activation message arrives.'
+                    )
+                except Exception:
+                    messages.warning(
+                        request,
+                        'You are logged in. Email verification is currently unavailable.'
+                    )
 
             next_url = request.GET.get("next")
             if next_url:
@@ -158,9 +156,9 @@ def register_page(request):
                         'Your pending account was updated. A new verification email was sent.'
                     )
                 except Exception:
-                    messages.error(
+                    messages.warning(
                         request,
-                        'This email is already registered, but the verification email could not be sent.'
+                        'Account updated. Email verification is currently unavailable, but you can log in with your new password.'
                     )
             else:
                 messages.warning(request, "Email already exists.")
@@ -200,9 +198,9 @@ def register_page(request):
                 profile.email_token
             )
         except Exception:
-            messages.error(
+            messages.warning(
                 request,
-                'Account created, but the verification email could not be sent. Please try registering again later.'
+                'Account created. Email verification is currently unavailable, but you can log in with your password.'
             )
             return HttpResponseRedirect(request.path_info)
 
