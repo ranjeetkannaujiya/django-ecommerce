@@ -1,6 +1,4 @@
 from django.shortcuts import render , redirect
-import uuid
-from base.emails import send_account_activation_email
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate , login, logout
@@ -230,13 +228,7 @@ def edit_profile(request):
         # Sirf tab jab email change hua ho
         if request.user.email != email:
             request.user.email = email
-            profile.is_email_verified = False
-            profile.email_token = str(uuid.uuid4())
-
-            send_account_activation_email(
-                 request.user.email,
-                 profile.email_token
-            )
+            profile.is_email_verified = True
 
         request.user.last_name = request.POST.get("last_name")
 
@@ -260,16 +252,7 @@ def edit_profile(request):
         request.user.save()
         profile.save()
 
-        if profile.is_email_verified:
-            messages.success(
-                request,
-                "Profile updated successfully."
-            )
-        else:
-            messages.success(
-                request,
-                "Profile updated. Please verify your new email address."
-            )
+        messages.success(request, "Profile updated successfully.")
         return redirect("profile")
 
     context = {
