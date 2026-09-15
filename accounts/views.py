@@ -8,6 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect, HttpResponse
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
+from django.db import IntegrityError, transaction
 from .models import Profile
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
@@ -139,18 +140,36 @@ def register_page(request):
             return HttpResponseRedirect(request.path_info)
 
 
-        user_obj = User.objects.create_user(
-            first_name=first_name,
-            last_name=last_name,
-            email=email,
-            username=username,
-            password=password,
-        )
+        try:
+            with transaction.atomic():
+                user_obj = User.objects.create_user(
+                    first_name=first_name,
+                    last_name=last_name,
+                    email=email,
+                    username=username,
+                    password=password,
+                )
+                profile, _ = Profile.objects.get_or_create(user=user_obj)
+                if not profile.email_token:
+                    profile.email_token = str(uuid.uuid4())
+                    profile.save(update_fields=["email_token"])
+        except IntegrityError:
+            messages.error(
+                request,
+                'This username or email was registered at the same time. Please try again with different details.'
+            )
+            return HttpResponseRedirect(request.path_info)
+        except Exception:
+            messages.error(
+                request,
+                'Registration could not be completed right now. Please try again later.'
+            )
+            return HttpResponseRedirect(request.path_info)
 
         try:
             send_account_activation_email(
                 user_obj.email,
-                user_obj.profile.email_token
+                profile.email_token
             )
         except Exception:
             messages.error(
