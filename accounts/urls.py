@@ -11,7 +11,6 @@ urlpatterns = [
     path("login/", views.login_page, name="login"),
     path("register/", views.register_page, name="register"),
     path("logout/", views.logout_page, name="logout"),
-    path("activate/<email_token>/", views.activate_email, name="activate_email"),
 
     # ==========================
     # Profile

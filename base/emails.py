@@ -3,42 +3,6 @@ from django.core.mail import send_mail, EmailMessage
 
 
 # ===========================================
-# ACCOUNT ACTIVATION EMAIL
-# ===========================================
-
-def send_account_activation_email(email, email_token):
-
-    activation_link = (
-        f"{settings.SITE_URL}/accounts/activate/{email_token}"
-    )
-
-    subject = "Verify Your Email - R Ecommerce"
-
-    message = f"""
-Hello,
-
-Thank you for creating your account.
-
-Please verify your email by clicking the link below.
-
-{activation_link}
-
-If you did not create this account, you can ignore this email.
-
-Thank you,
-R Ecommerce Team
-"""
-
-    send_mail(
-        subject,
-        message,
-        settings.DEFAULT_FROM_EMAIL,
-        [email],
-        fail_silently=False
-    )
-
-
-# ===========================================
 # CUSTOMER ORDER CONFIRMATION
 # ===========================================
 

@@ -171,31 +171,6 @@ def register_page(request):
     return render(request, 'accounts/register.html')
 
 
-def activate_email(request, email_token):
-
-    try:
-
-        profile = Profile.objects.get(
-            email_token=email_token
-        )
-
-        profile.is_email_verified = True
-        profile.email_token = ""
-
-        profile.save()
-
-        messages.success(
-            request,
-            "Email verified successfully."
-        )
-
-        return redirect('login')
-
-    except Exception:
-
-        return HttpResponse('Invalid Email token')
-
-
 @login_required
 def profile_page(request):
 
