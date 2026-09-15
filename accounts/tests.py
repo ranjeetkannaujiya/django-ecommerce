@@ -58,6 +58,9 @@ class AccountFlowTests(TestCase):
 		)
 
 		self.assertEqual(User.objects.filter(email="pending@example.com").count(), 1)
+		user.refresh_from_db()
+		self.assertEqual(user.username, "another")
+		self.assertTrue(user.check_password("StrongPassword123"))
 		send_email.assert_called_once()
 
 	@patch("accounts.views.send_account_activation_email")

@@ -128,6 +128,26 @@ def register_page(request):
         if existing_user:
             profile = get_profile_with_token(existing_user)
             if not profile.is_email_verified:
+                username_owner = User.objects.filter(
+                    username__iexact=username
+                ).exclude(pk=existing_user.pk).exists()
+                if username_owner:
+                    messages.warning(request, "Username already exists.")
+                    return HttpResponseRedirect(request.path_info)
+
+                existing_user.first_name = first_name
+                existing_user.last_name = last_name
+                existing_user.username = username
+                existing_user.set_password(password)
+                existing_user.save(
+                    update_fields=[
+                        "first_name",
+                        "last_name",
+                        "username",
+                        "password",
+                    ]
+                )
+
                 try:
                     send_account_activation_email(
                         existing_user.email,
@@ -135,7 +155,7 @@ def register_page(request):
                     )
                     messages.warning(
                         request,
-                        'This email is already registered. A new verification email was sent.'
+                        'Your pending account was updated. A new verification email was sent.'
                     )
                 except Exception:
                     messages.error(
