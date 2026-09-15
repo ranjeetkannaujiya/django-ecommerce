@@ -15,6 +15,14 @@ from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 
 
+def get_profile_with_token(user):
+    profile, _ = Profile.objects.get_or_create(user=user)
+    if not profile.email_token:
+        profile.email_token = str(uuid.uuid4())
+        profile.save(update_fields=["email_token"])
+    return profile
+
+
 # Login flow validates the user's identity against a Django auth user.
 # If the email is not verified, the request is blocked before authentication.
 def login_page(request):
@@ -33,11 +41,13 @@ def login_page(request):
             messages.warning(request, 'Account not found.')
             return HttpResponseRedirect(request.path_info)
 
-        if not user_obj.profile.is_email_verified:
+        profile = get_profile_with_token(user_obj)
+
+        if not profile.is_email_verified:
             try:
                 send_account_activation_email(
                     user_obj.email,
-                    user_obj.profile.email_token
+                    profile.email_token
                 )
                 messages.warning(
                     request,
@@ -116,11 +126,12 @@ def register_page(request):
 
         existing_user = User.objects.filter(email__iexact=email).first()
         if existing_user:
-            if not existing_user.profile.is_email_verified:
+            profile = get_profile_with_token(existing_user)
+            if not profile.is_email_verified:
                 try:
                     send_account_activation_email(
                         existing_user.email,
-                        existing_user.profile.email_token
+                        profile.email_token
                     )
                     messages.warning(
                         request,
@@ -149,10 +160,7 @@ def register_page(request):
                     username=username,
                     password=password,
                 )
-                profile, _ = Profile.objects.get_or_create(user=user_obj)
-                if not profile.email_token:
-                    profile.email_token = str(uuid.uuid4())
-                    profile.save(update_fields=["email_token"])
+                profile = get_profile_with_token(user_obj)
         except IntegrityError:
             messages.error(
                 request,

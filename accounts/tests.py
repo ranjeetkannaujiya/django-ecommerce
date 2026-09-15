@@ -3,6 +3,8 @@ from django.test import TestCase, override_settings
 from django.urls import reverse
 from unittest.mock import patch
 
+from .models import Profile
+
 
 @override_settings(
 	STORAGES={
@@ -56,6 +58,29 @@ class AccountFlowTests(TestCase):
 		)
 
 		self.assertEqual(User.objects.filter(email="pending@example.com").count(), 1)
+		send_email.assert_called_once()
+
+	@patch("accounts.views.send_account_activation_email")
+	def test_duplicate_email_recovers_missing_profile(self, send_email):
+		user = User.objects.create_user(
+			username="legacy",
+			email="legacy@example.com",
+			password="StrongPassword123",
+		)
+		user.profile.delete()
+
+		self.client.post(
+			reverse("register"),
+			{
+				"first_name": "Another",
+				"last_name": "User",
+				"username": "another",
+				"email": "LEGACY@EXAMPLE.COM",
+				"password": "StrongPassword123",
+			},
+		)
+
+		self.assertTrue(Profile.objects.filter(user=user).exists())
 		send_email.assert_called_once()
 
 	@patch("accounts.views.send_account_activation_email")
