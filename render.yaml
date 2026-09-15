@@ -31,6 +31,6 @@ services:
       - key: ADMIN_EMAIL
         sync: false
       - key: SITE_URL
-        sync: false
+        value: "https://django-ecommerce-ranjeet.onrender.com"
       - key: CSRF_TRUSTED_ORIGINS
         value: "https://*.onrender.com"

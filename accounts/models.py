@@ -5,7 +5,6 @@ from django.dispatch import receiver
 import uuid
 
 from base.models import BaseModel
-from base.emails import send_account_activation_email
 
 
 # Profile is the user extension used for e-commerce-specific data.
@@ -70,12 +69,3 @@ def create_profile_and_send_activation_email(
     if not profile.email_token:
         profile.email_token = str(uuid.uuid4())
         profile.save(update_fields=["email_token"])
-
-    if instance.email:
-        try:
-            send_account_activation_email(
-                instance.email,
-                profile.email_token
-            )
-        except Exception as e:
-            print(f"Activation email error: {e}")

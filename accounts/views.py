@@ -6,6 +6,8 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate , login, logout
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect, HttpResponse
+from django.core.exceptions import ValidationError
+from django.core.validators import validate_email
 from .models import Profile
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
@@ -18,20 +20,33 @@ def login_page(request):
 
     if request.method == 'POST':
 
-        login_input = request.POST.get("login")
-        password = request.POST.get('password')
+        login_input = request.POST.get("login", "").strip()
+        password = request.POST.get('password', '')
 
-        user_obj = User.objects.filter(email=login_input).first()
+        user_obj = User.objects.filter(email__iexact=login_input).first()
 
         if not user_obj:
-            user_obj = User.objects.filter(username=login_input).first()
+            user_obj = User.objects.filter(username__iexact=login_input).first()
 
         if not user_obj:
             messages.warning(request, 'Account not found.')
             return HttpResponseRedirect(request.path_info)
 
         if not user_obj.profile.is_email_verified:
-            messages.warning(request, 'Your account is not verified.')
+            try:
+                send_account_activation_email(
+                    user_obj.email,
+                    user_obj.profile.email_token
+                )
+                messages.warning(
+                    request,
+                    'Your account is not verified. A new verification email was sent.'
+                )
+            except Exception:
+                messages.error(
+                    request,
+                    'Your account is not verified and the verification email could not be sent. Please try again later.'
+                )
             return HttpResponseRedirect(request.path_info)
 
 
@@ -69,11 +84,21 @@ def register_page(request):
 
     if request.method == 'POST':
 
-        first_name = request.POST.get('first_name')
-        last_name = request.POST.get('last_name')
-        username = request.POST.get("username")
-        email = request.POST.get('email')
-        password = request.POST.get('password')
+        first_name = request.POST.get('first_name', '').strip()
+        last_name = request.POST.get('last_name', '').strip()
+        username = request.POST.get("username", '').strip()
+        email = request.POST.get('email', '').strip().lower()
+        password = request.POST.get('password', '')
+
+        try:
+            validate_email(email)
+        except ValidationError:
+            messages.error(request, 'Please enter a valid email address.')
+            return HttpResponseRedirect(request.path_info)
+
+        if not username:
+            messages.error(request, 'Username is required.')
+            return HttpResponseRedirect(request.path_info)
 
         # ===========================
         # Password Validation
@@ -88,28 +113,55 @@ def register_page(request):
 
         # ===========================
 
-        if User.objects.filter(email=email).exists():
-            messages.warning(request, "Email already exists.")
+        existing_user = User.objects.filter(email__iexact=email).first()
+        if existing_user:
+            if not existing_user.profile.is_email_verified:
+                try:
+                    send_account_activation_email(
+                        existing_user.email,
+                        existing_user.profile.email_token
+                    )
+                    messages.warning(
+                        request,
+                        'This email is already registered. A new verification email was sent.'
+                    )
+                except Exception:
+                    messages.error(
+                        request,
+                        'This email is already registered, but the verification email could not be sent.'
+                    )
+            else:
+                messages.warning(request, "Email already exists.")
             return HttpResponseRedirect(request.path_info)
 
-        if User.objects.filter(username=username).exists():
+        if User.objects.filter(username__iexact=username).exists():
             messages.warning(request, "Username already exists.")
             return HttpResponseRedirect(request.path_info)
 
 
-        user_obj = User.objects.create(
+        user_obj = User.objects.create_user(
             first_name=first_name,
             last_name=last_name,
             email=email,
-            username=username
+            username=username,
+            password=password,
         )
 
-        user_obj.set_password(password)
-        user_obj.save()
+        try:
+            send_account_activation_email(
+                user_obj.email,
+                user_obj.profile.email_token
+            )
+        except Exception:
+            messages.error(
+                request,
+                'Account created, but the verification email could not be sent. Please try registering again later.'
+            )
+            return HttpResponseRedirect(request.path_info)
 
         messages.success(
             request,
-            'An email has been sent on your mail.'
+            'An activation email has been sent to your email address.'
         )
 
         return HttpResponseRedirect(request.path_info)
